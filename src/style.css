@@ -1,0 +1,10 @@
+.drop-area {
+    background-color: alpha(@accent_bg_color, 0.05);
+    border-radius: 12px;
+    margin: 12px;
+}
+
+.drop-area.dragging {
+    background-color: alpha(@accent_bg_color, 0.15);
+    border: 2px dashed @accent_color;
+}

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=chameleon
+Exec=chameleon
+Icon=io.github.forklore.Chameleon
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=GTK;
+StartupNotify=true
+DBusActivatable=true
