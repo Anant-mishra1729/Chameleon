@@ -66,6 +66,8 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         files = value.get_files()
 
+        
+
         all_images = True
 
         for file in files:
@@ -76,6 +78,12 @@ class ChameleonWindow(Adw.ApplicationWindow):
             )
             if not info.get_content_type().startswith("image/"):
                 all_images = False
+        
+        if all_images and len(files) == 1:
+            toast = Adw.Toast.new("Please drop at least two images")
+            toast.set_timeout(2)
+            self.toast_overlay.add_toast(toast)
+            return False
 
         if not all_images:
             toast = Adw.Toast.new("Please drop only image files")

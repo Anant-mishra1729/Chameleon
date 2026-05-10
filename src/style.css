@@ -7,9 +7,9 @@
     transform: scale(1);
 
     transition:
-        transform 200ms ease,
-        background-color 200ms ease,
-        border 200ms ease;
+        transform 300ms ease,
+        background-color 300ms ease,
+        border 300ms ease;
 }
 
 .drop-area.dragging {
