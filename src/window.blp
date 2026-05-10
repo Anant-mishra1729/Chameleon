@@ -6,68 +6,70 @@ template $ChameleonWindow: Adw.ApplicationWindow {
   default-width: 800;
   default-height: 600;
 
-  content: Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {
-      [end]
-      MenuButton {
-        primary: true;
-        icon-name: "open-menu-symbolic";
-        tooltip-text: _("Main Menu");
-        menu-model: primary_menu;
+  Adw.ToastOverlay toast_overlay {
+    child: Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {
+        [end]
+        MenuButton {
+          primary: true;
+          icon-name: "open-menu-symbolic";
+          tooltip-text: _("Main Menu");
+          menu-model: primary_menu;
+        }
       }
-    }
 
-    Box main_box {
-      orientation: vertical;
-      hexpand: true;
-      vexpand: true;
-
-      styles [
-        "drop-area",
-      ]
-
-      Box {
+      Box main_box {
         orientation: vertical;
-        spacing: 12;
-        halign: center;
-        valign: center;
         hexpand: true;
         vexpand: true;
 
-        Image {
-          icon-name: "io.github.forklore.Chameleon-symbolic";
-          pixel-size: 128;
-          opacity: 0.4;
-          margin-bottom: 10;
-        }
+        styles [
+          "drop-area",
+        ]
 
-        Label {
-          label: _("Drag & drop images here or click + to upload");
-
-          styles [
-            "title-2",
-          ]
-
-          margin-bottom: 10;
-          margin-end: 10;
-          margin-start: 10;
-        }
-
-        Button add_image_files_button {
-          icon-name: "list-add-symbolic";
+        Box {
+          orientation: vertical;
+          spacing: 12;
           halign: center;
           valign: center;
-          margin-bottom: 10;
+          hexpand: true;
+          vexpand: true;
 
-          styles [
-            "suggested-action",
-            "pill",
-          ]
+          Image {
+            icon-name: "io.github.forklore.Chameleon-symbolic";
+            pixel-size: 128;
+            opacity: 0.4;
+            margin-bottom: 10;
+          }
+
+          Label {
+            label: _("Drag & drop images here or click + to upload");
+
+            styles [
+              "title-2",
+            ]
+
+            margin-bottom: 10;
+            margin-end: 10;
+            margin-start: 10;
+          }
+
+          Button add_image_files_button {
+            icon-name: "list-add-symbolic";
+            halign: center;
+            valign: center;
+            margin-bottom: 10;
+
+            styles [
+              "suggested-action",
+              "pill",
+            ]
+          }
         }
       }
-    }
-  };
+    };
+  }
 }
 
 menu primary_menu {

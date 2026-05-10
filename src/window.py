@@ -18,13 +18,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gi.repository import Adw
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk,Gio
 
 @Gtk.Template(resource_path='/io/github/forklore/Chameleon/window.ui')
 class ChameleonWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'ChameleonWindow'
 
     main_box = Gtk.Template.Child()
+    toast_overlay = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -41,6 +42,17 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         # Enable drag & drop on main_box
         self.main_box.add_controller(drop_target)
+    
+    def _all_images(self, files):
+        for file in files:
+            info = file.query_info(
+                "standard::content-type",
+                0,
+                None
+            )
+            if not info.get_content_type().startswith("image/"):
+                return False
+        return True
 
     def on_drag_enter(self, target, x, y):
         self.main_box.add_css_class("dragging")
@@ -51,8 +63,25 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
     def on_drop(self, target, value, x, y):
         self.main_box.remove_css_class("dragging")
+
         files = value.get_files()
 
+        all_images = True
+
+        for file in files:
+            info = file.query_info(
+                "standard::content-type",
+                0,
+                None
+            )
+            if not info.get_content_type().startswith("image/"):
+                all_images = False
+
+        if not all_images:
+            toast = Adw.Toast.new("Please drop only image files")
+            self.toast_overlay.add_toast(toast)
+            return False
+        
         for file in files:
             print(file.get_uri())
 
