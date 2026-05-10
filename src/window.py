@@ -79,6 +79,7 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         if not all_images:
             toast = Adw.Toast.new("Please drop only image files")
+            toast.set_timeout(2)
             self.toast_overlay.add_toast(toast)
             return False
         

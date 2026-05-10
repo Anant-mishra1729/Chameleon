@@ -2,9 +2,16 @@
     background-color: alpha(@accent_bg_color, 0.05);
     border-radius: 12px;
     margin: 12px;
+
+    transition:
+        margin 200ms ease,
+        background-color 200ms ease,
+        border 200ms ease;
 }
 
 .drop-area.dragging {
     background-color: alpha(@accent_bg_color, 0.15);
     border: 2px dashed @accent_color;
+    margin: 24px;
+
 }
