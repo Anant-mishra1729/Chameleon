@@ -1,20 +1,22 @@
 .drop-area {
-    background-color: alpha(@accent_bg_color, 0.05);
+    border: 2px solid transparent;
     border-radius: 12px;
+    margin: 24px;
 
-    margin: 12px;
+    background-color: alpha(@accent_bg_color, 0.05);
 
+    /* Tiny upscale only */
     transform: scale(1);
 
     transition:
-        transform 300ms ease,
-        background-color 300ms ease,
-        border 300ms ease;
+        transform 180ms cubic-bezier(0.2, 0.0, 0.0, 1.0),
+        background-color 180ms ease,
+        border-color 180ms ease;
 }
 
 .drop-area.dragging {
-    transform: scale(0.97);
+    transform: scale(1.01);
 
     background-color: alpha(@accent_bg_color, 0.15);
-    border: 2px dashed @accent_color;
+    border-color: @accent_color;
 }

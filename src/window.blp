@@ -19,8 +19,7 @@ template $ChameleonWindow: Adw.ApplicationWindow {
         }
       }
 
-      Box main_box {
-        orientation: vertical;
+      Adw.Bin main_box {
         hexpand: true;
         vexpand: true;
 
@@ -30,41 +29,100 @@ template $ChameleonWindow: Adw.ApplicationWindow {
 
         Box {
           orientation: vertical;
-          spacing: 12;
+          spacing: 20;
           halign: center;
           valign: center;
           hexpand: true;
           vexpand: true;
+          margin-top: 32;
+          margin-bottom: 32;
+          margin-start: 32;
+          margin-end: 32;
 
           Image {
-            icon-name: "io.github.forklore.Chameleon-symbolic";
-            pixel-size: 128;
-            opacity: 0.4;
-            margin-bottom: 10;
+            icon-name: "folder-pictures-symbolic";
+            pixel-size: 96;
+            opacity: 0.45;
+            margin-bottom: 8;
+            accessible-role: presentation;
           }
 
           Label {
-            label: _("Drag & drop images here or click + to upload");
+            label: _("Drop images here");
 
             styles [
-              "title-2",
+              "title-1",
             ]
 
-            margin-bottom: 10;
-            margin-end: 10;
-            margin-start: 10;
+            justify: center;
+            wrap: true;
           }
 
-          Button add_image_files_button {
-            icon-name: "list-add-symbolic";
-            halign: center;
-            valign: center;
-            margin-bottom: 10;
+          Label {
+            label: _("or use the buttons below to select files");
 
             styles [
-              "suggested-action",
-              "pill",
+              "dim-label",
             ]
+
+            justify: center;
+            wrap: true;
+            margin-bottom: 8;
+          }
+
+          /* Action buttons row */
+          Box {
+            orientation: horizontal;
+            spacing: 12;
+            halign: center;
+            margin-top: 8;
+
+            /* Main image selection button */
+            Button add_image_files_button {
+              child: Box {
+                orientation: horizontal;
+                spacing: 8;
+
+                Image {
+                  icon-name: "document-open-symbolic";
+                  pixel-size: 20;
+                }
+
+                Label {
+                  label: _("Select Images");
+                }
+              };
+
+              width-request: 180;
+
+              styles [
+                "suggested-action",
+                "pill",
+              ]
+            }
+
+            /* HEIC import button placed to the right */
+            Button import_heic_button {
+              child: Box {
+                orientation: horizontal;
+                spacing: 8;
+
+                Image {
+                  icon-name: "insert-image-symbolic";
+                  pixel-size: 20;
+                }
+
+                Label {
+                  label: _("Import HEIC");
+                }
+              };
+
+              width-request: 180;
+
+              styles [
+                "pill",
+              ]
+            }
           }
         }
       }

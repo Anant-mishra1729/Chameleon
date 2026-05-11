@@ -42,6 +42,7 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         # Enable drag & drop on main_box
         self.main_box.add_controller(drop_target)
+
     
     def _all_images(self, files):
         for file in files:
@@ -66,31 +67,18 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         files = value.get_files()
 
-        
-
-        all_images = True
-
-        for file in files:
-            info = file.query_info(
-                "standard::content-type",
-                0,
-                None
-            )
-            if not info.get_content_type().startswith("image/"):
-                all_images = False
-        
-        if all_images and len(files) == 1:
-            toast = Adw.Toast.new("Please drop at least two images")
-            toast.set_timeout(2)
+        if not self._all_images(files):
+            toast = Adw.Toast.new("Only image files are supported")
+            toast.set_timeout(3)
             self.toast_overlay.add_toast(toast)
             return False
 
-        if not all_images:
-            toast = Adw.Toast.new("Please drop only image files")
-            toast.set_timeout(2)
+        if len(files) < 2:
+            toast = Adw.Toast.new("Drop at least 2 images")
+            toast.set_timeout(3)
             self.toast_overlay.add_toast(toast)
             return False
-        
+
         for file in files:
             print(file.get_uri())
 
