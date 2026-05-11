@@ -1,7 +1,7 @@
 .drop-area {
     border: 2px solid transparent;
     border-radius: 12px;
-    margin: 24px;
+    margin: 16px;
 
     background-color: alpha(@accent_bg_color, 0.05);
 

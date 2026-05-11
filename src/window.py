@@ -26,6 +26,7 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
     main_box = Gtk.Template.Child()
     toast_overlay = Gtk.Template.Child()
+    add_image_files_button = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,6 +44,12 @@ class ChameleonWindow(Adw.ApplicationWindow):
         # Enable drag & drop on main_box
         self.main_box.add_controller(drop_target)
 
+        # File dialog support
+        self.add_image_files_button.connect(
+            "clicked",
+            self.on_add_image_files_clicked,
+        )    
+        self._file_dialog = None
     
     def _all_images(self, files):
         for file in files:
@@ -83,3 +90,49 @@ class ChameleonWindow(Adw.ApplicationWindow):
             print(file.get_uri())
 
         return True
+    
+    def on_add_image_files_clicked(self, button):
+
+        self._file_dialog = Gtk.FileChooserNative(
+            title="Select Images",
+            transient_for=self,
+            action=Gtk.FileChooserAction.OPEN,
+            accept_label="_Open",
+            cancel_label="_Cancel",
+        )
+        self._file_dialog.set_select_multiple(True)
+
+        image_filter = Gtk.FileFilter()
+        image_filter.set_name("Image Files")
+
+        for pattern in (
+            "*.png",
+            "*.jpg",
+            "*.jpeg",
+            "*.webp",
+            "*.heic",
+        ):
+            image_filter.add_pattern(pattern)
+
+        self._file_dialog.add_filter(image_filter)
+        self._file_dialog.set_filter(image_filter)
+
+        self._file_dialog.connect(
+            "response",
+            self.on_add_image_files_response,
+        )
+
+        self._file_dialog.show()
+
+    def on_add_image_files_response(self, dialog, response):
+        if response == Gtk.ResponseType.ACCEPT:
+            model = dialog.get_files()
+
+            for i in range(model.get_n_items()):
+                file = model.get_item(i) 
+                path = file.get_path()
+                print(f"Selected: {path}")
+
+
+        dialog.destroy()
+        self._file_dialog = None
