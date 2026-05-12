@@ -17,12 +17,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw
-from gi.repository import Gtk, Gdk,Gio
+from gi.repository import Adw, Gtk, Gdk
 
-@Gtk.Template(resource_path='/io/github/forklore/Chameleon/window.ui')
+
+@Gtk.Template(resource_path="/io/github/forklore/Chameleon/window.ui")
 class ChameleonWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'ChameleonWindow'
+    __gtype_name__ = "ChameleonWindow"
 
     main_box = Gtk.Template.Child()
     toast_overlay = Gtk.Template.Child()
@@ -33,34 +33,51 @@ class ChameleonWindow(Adw.ApplicationWindow):
 
         drop_target = Gtk.DropTarget.new(
             Gdk.FileList,
-            Gdk.DragAction.COPY
+            Gdk.DragAction.COPY,
         )
 
-        # Connect drop signal
         drop_target.connect("drop", self.on_drop)
         drop_target.connect("enter", self.on_drag_enter)
         drop_target.connect("leave", self.on_drag_leave)
 
-        # Enable drag & drop on main_box
         self.main_box.add_controller(drop_target)
 
-        # File dialog support
         self.add_image_files_button.connect(
             "clicked",
             self.on_add_image_files_clicked,
-        )    
-        self._file_dialog = None
-    
+        )
+
+        self.images = []
+
+    def toast(self, message):
+        toast = Adw.Toast.new(message)
+        toast.set_timeout(3)
+        self.toast_overlay.add_toast(toast)
+
     def _all_images(self, files):
-        for file in files:
-            info = file.query_info(
+        return all(
+            file.query_info(
                 "standard::content-type",
                 0,
-                None
+                None,
             )
-            if not info.get_content_type().startswith("image/"):
-                return False
-        return True
+            .get_content_type()
+            .startswith("image/")
+            for file in files
+        )
+
+    def _select_images(self, files):
+        if len(files) < 2:
+            self.toast("Select at least 2 images")
+            return
+
+        if not self._all_images(files):
+            self.toast("Only image files are supported")
+            return
+
+        self.images = [file.get_path() for file in files]
+
+        print(self.images)
 
     def on_drag_enter(self, target, x, y):
         self.main_box.add_css_class("dragging")
@@ -72,38 +89,23 @@ class ChameleonWindow(Adw.ApplicationWindow):
     def on_drop(self, target, value, x, y):
         self.main_box.remove_css_class("dragging")
 
-        files = value.get_files()
-
-        if not self._all_images(files):
-            toast = Adw.Toast.new("Only image files are supported")
-            toast.set_timeout(3)
-            self.toast_overlay.add_toast(toast)
-            return False
-
-        if len(files) < 2:
-            toast = Adw.Toast.new("Drop at least 2 images")
-            toast.set_timeout(3)
-            self.toast_overlay.add_toast(toast)
-            return False
-
-        for file in files:
-            print(file.get_uri())
+        self._select_images(value.get_files())
 
         return True
-    
-    def on_add_image_files_clicked(self, button):
 
-        self._file_dialog = Gtk.FileChooserNative(
+    def on_add_image_files_clicked(self, button):
+        dialog = Gtk.FileChooserNative(
             title="Select Images",
             transient_for=self,
             action=Gtk.FileChooserAction.OPEN,
             accept_label="_Open",
             cancel_label="_Cancel",
         )
-        self._file_dialog.set_select_multiple(True)
+
+        dialog.set_select_multiple(True)
 
         image_filter = Gtk.FileFilter()
-        image_filter.set_name("Image Files")
+        image_filter.set_name("Images")
 
         for pattern in (
             "*.png",
@@ -114,25 +116,19 @@ class ChameleonWindow(Adw.ApplicationWindow):
         ):
             image_filter.add_pattern(pattern)
 
-        self._file_dialog.add_filter(image_filter)
-        self._file_dialog.set_filter(image_filter)
+        dialog.add_filter(image_filter)
+        dialog.set_filter(image_filter)
 
-        self._file_dialog.connect(
-            "response",
-            self.on_add_image_files_response,
-        )
+        dialog.connect("response", self.on_file_dialog_response)
 
-        self._file_dialog.show()
+        dialog.show()
 
-    def on_add_image_files_response(self, dialog, response):
+    def on_file_dialog_response(self, dialog, response):
         if response == Gtk.ResponseType.ACCEPT:
             model = dialog.get_files()
 
-            for i in range(model.get_n_items()):
-                file = model.get_item(i) 
-                path = file.get_path()
-                print(f"Selected: {path}")
+            files = [model.get_item(i) for i in range(model.get_n_items())]
 
+            self._select_images(files)
 
         dialog.destroy()
-        self._file_dialog = None
